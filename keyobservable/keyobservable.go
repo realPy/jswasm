@@ -47,11 +47,12 @@ func KeyObservable() *Observable {
 	return &ko
 }
 
-func (ko *Observable) RegisterFunc(key string, f KeyObservableFunc) {
+func (ko *Observable) RegisterFunc(key string, f KeyObservableFunc) *KeyObservableFunc {
 	if ko.register[key] == nil {
 		ko.register[key] = make(map[*KeyObservableFunc]bool)
 	}
 	ko.register[key][&f] = true
+	return &f
 }
 
 func (ko *Observable) Put(key string, value interface{}) {
@@ -78,11 +79,11 @@ func (ko *Observable) Set(key string, value interface{}, persist bool) {
 	}
 }
 
-func (ko *Observable) UnRegisterFunc(key string, f KeyObservableFunc) {
+func (ko *Observable) UnRegisterFunc(key string, f *KeyObservableFunc) {
 
 	if funcs, ok := ko.register[key]; ok {
-		if _, ok := funcs[&f]; ok {
-			delete(ko.register[key], &f)
+		if _, ok := funcs[f]; ok {
+			delete(ko.register[key], f)
 			if len(ko.register[key]) == 0 {
 				delete(ko.register, key)
 			}
