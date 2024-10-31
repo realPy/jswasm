@@ -7,6 +7,7 @@ import (
 
 var setFunc js.Value
 var getFunc js.Value
+var deleteFunc js.Value
 var callFunc js.Value
 var invokeFunc js.Value
 var newFunc js.Value
@@ -19,8 +20,10 @@ func SetSyscall() {
 	eval_(`hCall = (obj,method,args) => { try { func=Reflect.get(obj,method); return [true,Reflect.apply(func,obj,args)] } catch (err) { return [false,err] } }`)
 	eval_(`hInvoke = (func,args) => { try { return [true,Reflect.apply(func,undefined,args)] } catch (err) { return [false,err] } }`)
 	eval_(`hNew = (func,args) => { try { return [true,Reflect.construct(func,args)] } catch (err) { return [false,err] } }`)
+	eval_(`hDelete = (obj,property) => { try { return [true,Reflect.deleteProperty(obj,property)] }catch(err){ return [false,err] } }`)
 	setFunc = js.Global().Get("hSet")
 	getFunc = js.Global().Get("hGet")
+	deleteFunc = js.Global().Get("hDelete")
 	callFunc = js.Global().Get("hCall")
 	invokeFunc = js.Global().Get("hInvoke")
 	newFunc = js.Global().Get("hNew")
@@ -37,6 +40,16 @@ func Set(obj js.Value, name string, val interface{}) error {
 		err = errors.New(ret.Get("message").String())
 	}
 	return err
+}
+
+func Delete(obj js.Value, property string) (js.Value, error) {
+	ret := deleteFunc.Invoke(obj, js.ValueOf(property))
+
+	if ret.Index(0).Bool() {
+		return ret.Index(1), nil
+	} else {
+		return ret.Index(1), errors.New(ret.Index(1).Get("message").String())
+	}
 }
 
 func Get(obj js.Value, i interface{}) (js.Value, error) {
@@ -542,6 +555,11 @@ func (b BaseObject) GetAttributeInt64(attribute string) (int64, error) {
 }
 
 func (b BaseObject) SetAttributeInt(attribute string, value int) error {
+
+	return b.Set(attribute, js.ValueOf(value))
+}
+
+func (b BaseObject) SetAttributeInt64(attribute string, value int64) error {
 
 	return b.Set(attribute, js.ValueOf(value))
 }

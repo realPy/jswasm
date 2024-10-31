@@ -60,3 +60,23 @@ func TestMethods(t *testing.T) {
 
 	}
 }
+
+func TestDeleteProperty(t *testing.T) {
+
+	baseobject.Eval(`
+	objnew= new Object();
+	objnew.test=3;
+	`)
+
+	if obj, err := baseobject.Get(js.Global(), "objnew"); testingutils.AssertErr(t, err) {
+		if o, err := NewFromJSObject(obj); testingutils.AssertErr(t, err) {
+			v, _ := o.GetAttributeInt64("test")
+			testingutils.AssertExpect(t, int64(3), v)
+			testingutils.AssertExpect(t, nil, o.Delete("test"))
+			_, err := o.GetAttributeInt64("test")
+			testingutils.AssertExpect(t, "Undefined value", err.Error())
+
+		}
+	}
+
+}

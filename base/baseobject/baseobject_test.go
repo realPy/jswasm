@@ -568,6 +568,29 @@ func TestExport(t *testing.T) {
 
 }
 
+func TestDelete(t *testing.T) {
+
+	var err error
+	var obj js.Value
+	var b BaseObject
+
+	Eval("customobject=new Object()")
+	Eval("customobject.Value=\"HelloWorld\"")
+
+	if obj, err = Get(js.Global(), "customobject"); err == nil {
+
+		if b, err = NewFromJSObject(obj); err == nil {
+			Delete(b.JSObject(), "Value")
+
+			v, _ := b.Get("Value")
+			if !v.IsUndefined() {
+				t.Error("delete should set undefined")
+			}
+
+		}
+	}
+
+}
 func TestGetAttributeString(t *testing.T) {
 
 	var err error
@@ -811,6 +834,48 @@ func TestGetAttributeInt(t *testing.T) {
 			if _, err := b.GetAttributeInt("Eventp"); !errors.Is(err, ErrUndefinedValue) {
 				t.Errorf("Must Return %s", ErrUndefinedValue.Error())
 			}
+		} else {
+
+			t.Errorf(err.Error())
+
+		}
+
+	} else {
+
+		t.Errorf(err.Error())
+
+	}
+
+}
+
+func TestSetAttributeInt64(t *testing.T) {
+	var obj js.Value
+	var err error
+	var b BaseObject
+
+	Eval("customobject=new Object()")
+
+	if obj, err = Get(js.Global(), "customobject"); err == nil {
+
+		if b, err = NewFromJSObject(obj); err == nil {
+			if err = b.SetAttributeInt64("Value", 69); err == nil {
+				var v int64
+				if v, err = b.GetAttributeInt64("Value"); err == nil {
+					if v != 69 {
+						t.Errorf("Must be equal to 69")
+					}
+				} else {
+
+					t.Errorf(err.Error())
+
+				}
+
+			} else {
+
+				t.Errorf(err.Error())
+
+			}
+
 		} else {
 
 			t.Errorf(err.Error())
