@@ -42,52 +42,106 @@ func TestNewFromJSObject(t *testing.T) {
 
 func TestGetRequest(t *testing.T) {
 
-	var io chan bool = make(chan bool)
+	t.Run("get request with ResponseHeader", func(t *testing.T) {
+		var io chan bool = make(chan bool)
 
-	if xhr, err := New(); testingutils.AssertErr(t, err) {
+		if xhr, err := New(); testingutils.AssertErr(t, err) {
 
-		err := xhr.Open("GET", "http://localhost/get")
-		testingutils.AssertErr(t, err)
+			err := xhr.Open("GET", "http://localhost/get")
+			testingutils.AssertErr(t, err)
 
-		xhr.SetOnload(func(i interface{}) {
+			xhr.SetOnload(func(i interface{}) {
 
-			if status, err := xhr.Status(); testingutils.AssertErr(t, err) {
-				testingutils.AssertExpect(t, status, 200)
-			}
+				if status, err := xhr.Status(); testingutils.AssertErr(t, err) {
+					testingutils.AssertExpect(t, status, 200)
+				}
 
-			if header, err := xhr.GetResponseHeader("Content-Type"); testingutils.AssertErr(t, err) {
+				if header, err := xhr.GetResponseHeader("Content-Type"); testingutils.AssertErr(t, err) {
 
-				testingutils.AssertExpect(t, "application/json", header)
+					testingutils.AssertExpect(t, "application/json", header)
 
-			}
-			if text, err := xhr.ResponseText(); testingutils.AssertErr(t, err) {
+				}
+				if text, err := xhr.ResponseText(); testingutils.AssertErr(t, err) {
 
-				if j, err := json.Parse(text); testingutils.AssertErr(t, err) {
-					goValue := j.Map()
+					if j, err := json.Parse(text); testingutils.AssertErr(t, err) {
+						goValue := j.Map()
 
-					url := goValue.(map[string]interface{})["url"]
+						url := goValue.(map[string]interface{})["url"]
 
-					if url != nil {
-						testingutils.AssertExpect(t, url, "http://localhost/get")
-						io <- true
-					} else {
-						t.Error("No url present")
+						if url != nil {
+							testingutils.AssertExpect(t, url, "http://localhost/get")
+							io <- true
+						} else {
+							t.Error("No url present")
+						}
+
 					}
 
 				}
 
+			})
+
+			xhr.Send()
+
+			select {
+			case <-io:
+			case <-time.After(time.Duration(1000) * time.Millisecond):
+				t.Errorf("No message channel receive")
 			}
-
-		})
-
-		xhr.Send()
-
-		select {
-		case <-io:
-		case <-time.After(time.Duration(1000) * time.Millisecond):
-			t.Errorf("No message channel receive")
 		}
-	}
+
+	})
+
+	t.Run("get request with GetAllResponseHeader", func(t *testing.T) {
+		var io chan bool = make(chan bool)
+
+		if xhr, err := New(); testingutils.AssertErr(t, err) {
+
+			err := xhr.Open("GET", "http://localhost/get")
+			testingutils.AssertErr(t, err)
+
+			xhr.SetOnload(func(i interface{}) {
+
+				if status, err := xhr.Status(); testingutils.AssertErr(t, err) {
+					testingutils.AssertExpect(t, status, 200)
+				}
+
+				if headers, err := xhr.GetAllResponseHeader(); testingutils.AssertErr(t, err) {
+
+					testingutils.AssertStringContains(t, "content-type: application/json\r\n", headers)
+					testingutils.AssertStringContains(t, "content-length: ", headers)
+
+				}
+				if text, err := xhr.ResponseText(); testingutils.AssertErr(t, err) {
+
+					if j, err := json.Parse(text); testingutils.AssertErr(t, err) {
+						goValue := j.Map()
+
+						url := goValue.(map[string]interface{})["url"]
+
+						if url != nil {
+							testingutils.AssertExpect(t, url, "http://localhost/get")
+							io <- true
+						} else {
+							t.Error("No url present")
+						}
+
+					}
+
+				}
+
+			})
+
+			xhr.Send()
+
+			select {
+			case <-io:
+			case <-time.After(time.Duration(1000) * time.Millisecond):
+				t.Errorf("No message channel receive")
+			}
+		}
+	})
+
 }
 
 func TestPostRequest(t *testing.T) {

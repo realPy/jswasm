@@ -1,7 +1,6 @@
 package serviceworkerregistration
 
 import (
-	"fmt"
 	"sync"
 	"syscall/js"
 
@@ -82,7 +81,6 @@ func (s ServiceWorkerRegistration) getserviceworkerAttribute(attribute string) (
 			return sw, baseobject.ErrUndefinedValue
 		} else {
 			if sw, ok = obj.(serviceworker.ServiceWorker); !ok {
-				fmt.Printf("-->%v\n", obj.(baseobject.BaseObject).ConstructName_())
 				err = serviceworker.ErrNotAServiceWorker
 
 			}

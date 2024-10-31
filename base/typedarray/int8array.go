@@ -60,12 +60,10 @@ func NewInt8Array(value interface{}) (Int8Array, error) {
 }
 
 func NewInt8ArrayFrom(iterable interface{}) (Int8Array, error) {
-
 	arr, err := newTypedArrayFrom(GetInt8ArrayInterface(), func(v js.Value) (interface{}, error) {
 		return NewInt8FromJSObject(v)
 	}, iterable)
 	return arr.(Int8Array), err
-
 }
 
 func NewInt8ArrayOf(values ...interface{}) (Int8Array, error) {

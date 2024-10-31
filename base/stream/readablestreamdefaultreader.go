@@ -52,7 +52,7 @@ func NewReadableStreamDefaultReaderFromJSObject(obj js.Value) (ReadableStreamDef
 		}
 	}
 
-	return r, ErrNotAReadableStream
+	return r, ErrNotAReadableStreamDefaultReader
 }
 
 func (r ReadableStreamDefaultReader) newRead(data []byte, dataHandle func([]byte, int)) *promise.Promise {

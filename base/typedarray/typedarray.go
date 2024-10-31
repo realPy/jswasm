@@ -11,7 +11,6 @@ import (
 )
 
 func init() {
-
 	initinterface.RegisterInterface(GetFloat32ArrayInterface)
 	initinterface.RegisterInterface(GetFloat64ArrayInterface)
 	initinterface.RegisterInterface(GetInt8ArrayInterface)

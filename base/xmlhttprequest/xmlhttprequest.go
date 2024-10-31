@@ -195,6 +195,30 @@ func (x XMLHTTPRequest) GetResponseHeader(header string) (string, error) {
 	return "", err
 }
 
+// GetAllResponseHeader https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/getAllResponseHeaders
+func (x XMLHTTPRequest) GetAllResponseHeader() (string, error) {
+	var responseHeader js.Value
+	var err error
+	if responseHeader, err = x.Call("getAllResponseHeaders"); err == nil {
+
+		if responseHeader.Type() == js.TypeString {
+			return responseHeader.String(), nil
+		} else {
+			return "", baseobject.ErrObjectNotString
+		}
+
+	}
+	return "", err
+}
+
+// overrideMimeType https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/overrideMimeType
+func (x XMLHTTPRequest) OverrideMimeType(mimetype string) error {
+	var err error
+	_, err = x.Call("overrideMimeType", js.ValueOf(mimetype))
+
+	return err
+}
+
 // Response
 func (x XMLHTTPRequest) Response() (js.Value, error) {
 	return x.Get("response")

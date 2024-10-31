@@ -15,7 +15,6 @@ var writeablestreamdefaultinterface js.Value
 
 // GetWritableStreamDefaultWriterInterface
 func GetWritableStreamDefaultWriterInterface() js.Value {
-
 	singletonReadableStreamDefault.Do(func() {
 
 		var err error

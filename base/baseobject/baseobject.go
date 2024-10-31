@@ -255,6 +255,15 @@ func NewFromJSObject(obj js.Value) (BaseObject, error) {
 
 }
 
+// NewEmptyObject empty object.
+func NewEmptyObject() (BaseObject, error) {
+	var o BaseObject
+	obj := js.ValueOf(map[string]interface{}{})
+	o.object = &obj
+	return o, nil
+
+}
+
 // Empty check if the struct is an empty Struct or have a JS Value attached
 func (b BaseObject) Empty() bool {
 

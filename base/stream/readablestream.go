@@ -16,9 +16,10 @@ func init() {
 
 	initinterface.RegisterInterface(GetRInterface)
 	initinterface.RegisterInterface(GetWInterface)
+	initinterface.RegisterInterface(GetTInterface)
 	initinterface.RegisterInterface(GetReadableStreamDefaultReaderInterface)
 	initinterface.RegisterInterface(GetWritableStreamDefaultWriterInterface)
-
+	initinterface.RegisterInterface(GetTransformStreamDefaultControllerInterface)
 }
 
 var singletonr sync.Once
