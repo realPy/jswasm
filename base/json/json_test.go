@@ -27,6 +27,10 @@ func TestParse(t *testing.T) {
 			}`
 
 	if j, err := Parse(str); testingutils.AssertErr(t, err) {
+
+		k, _ := j.Keys()
+		l, _ := k.Length()
+		testingutils.AssertExpect(t, 3, l)
 		goValue := j.Map()
 
 		testingutils.AssertExpect(t, "John", goValue.(map[string]interface{})["name"])

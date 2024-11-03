@@ -133,3 +133,8 @@ func (o Object) Map() (objectmap.ObjectMap, error) {
 	}
 	return newMap, err
 }
+
+func (o Object) Delete(property string) error {
+	_, err := baseobject.Delete(o.JSObject(), property)
+	return err
+}

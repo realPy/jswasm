@@ -19,6 +19,13 @@ var singleton sync.Once
 
 var storageinterface js.Value
 
+type StorageType string
+
+const (
+	StorageTypeSession StorageType = "sessionStorage"
+	StorageTypeLocal   StorageType = "localStorage"
+)
+
 // GetInterface get the Storage interface
 func GetInterface() js.Value {
 
@@ -46,6 +53,23 @@ type StorageFrom interface {
 
 func (s Storage) Storage_() Storage {
 	return s
+}
+
+func NewStorage(storageType StorageType) (*Storage, error) {
+
+	winobj, err := baseobject.Get(js.Global(), "window")
+	if err != nil {
+		return nil, err
+	}
+
+	storageobj, err := baseobject.Get(winobj, string(storageType))
+	if err != nil {
+		return nil, err
+	}
+
+	store, err := NewFromJSObject(storageobj)
+	return &store, err
+
 }
 
 func NewFromJSObject(obj js.Value) (Storage, error) {
