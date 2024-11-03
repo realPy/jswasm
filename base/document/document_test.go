@@ -4,6 +4,7 @@ import (
 	"errors"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/realPy/hogosuru/base/baseobject"
 	"github.com/realPy/hogosuru/base/element"
@@ -371,7 +372,7 @@ func TestLastModified(t *testing.T) {
 func TestReadyState(t *testing.T) {
 
 	if d, err := New(); testingutils.AssertErr(t, err) {
-
+		time.Sleep(100 * time.Millisecond)
 		if state, err := d.ReadyState(); testingutils.AssertErr(t, err) {
 			testingutils.AssertExpect(t, "complete", state)
 		}
