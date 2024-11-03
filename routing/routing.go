@@ -55,16 +55,6 @@ func Router() *RouteMap {
 	singletonRoute.Do(func() {
 		route.routing = make(map[string]Rendering)
 		if w, err := window.New(); err == nil {
-			/*
-				//Vérifier si cette fonction a du sens
-				w.OnHashChange(func(e event.Event) {
-
-					if route.mode == HASHROUTE {
-						fmt.Printf("onurlhash\n")
-						route.onurlchange()
-					}
-
-				})*/
 
 			w.OnPopState(func(e event.Event) {
 
@@ -158,9 +148,6 @@ func (r *RouteMap) loadChilds(d document.Document, obj Rendering, node node.Node
 				}
 
 				obj.OnEndChildsRendering()
-				if r.defaultRendering == obj {
-					r.onurlchange()
-				}
 
 			})
 		}

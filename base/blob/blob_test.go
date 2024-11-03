@@ -7,12 +7,14 @@ import (
 	"github.com/realPy/hogosuru/base/array"
 	"github.com/realPy/hogosuru/base/arraybuffer"
 	"github.com/realPy/hogosuru/base/baseobject"
+	"github.com/realPy/hogosuru/base/initinterface"
 	"github.com/realPy/hogosuru/base/typedarray"
 	"github.com/realPy/hogosuru/testingutils"
 )
 
 func TestMain(m *testing.M) {
 	baseobject.SetSyscall()
+	initinterface.Init()
 	m.Run()
 }
 
@@ -189,3 +191,57 @@ func TestText(t *testing.T) {
 	}
 
 }
+
+/*
+func TestNewTransformStream(t *testing.T) {
+	if ts, err := stream.NewTransformStream(
+		func(controller stream.TransformStreamDefaultController) {
+
+		},
+		func(chunk interface{}, controller stream.TransformStreamDefaultController) {
+
+			if buffer, ok := chunk.(typedarray.Uint8Array); ok {
+				size, _ := buffer.Length()
+				gobuff := make([]byte, size)
+				buffer.CopyBytes(gobuff)
+				s := string(gobuff)
+				s = strings.ToUpper(s)
+				buffer.CopyFromBytes([]byte(s)[:])
+				controller.Enqueue(buffer.BaseObject)
+			}
+		}); testingutils.AssertErr(t, err) {
+		c := make(chan bool, 1)
+		testingutils.AssertExpect(t, "[object TransformStream]", ts.ToString_())
+		b, _ := New("hello world")
+		inputstream, _ := b.Stream()
+		pipt, _ := inputstream.PipeThrough(ts)
+		rsp, _ := response.New(pipt)
+
+		p, _ := rsp.ArrayBuffer()
+
+		p.Then(func(i interface{}) *promise.Promise {
+
+			if ab, ok := i.(arraybuffer.ArrayBuffer); ok {
+				size, _ := ab.ByteLength()
+				gobuff := make([]byte, size)
+
+				abb, _ := typedarray.NewUint8Array(ab)
+				abb.CopyBytes(gobuff)
+				fmt.Printf("-->%s\n", string(gobuff))
+			}
+
+			return nil
+		}, func(e error) {
+			t.Error(e.Error())
+		})
+
+		select {
+		case <-c:
+		case <-time.After(800 * time.Millisecond):
+			t.Error("stop")
+
+		}
+
+	}
+}
+*/

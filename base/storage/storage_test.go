@@ -41,6 +41,14 @@ func TestNewStorage(t *testing.T) {
 
 	})
 
+	t.Run("new", func(t *testing.T) {
+
+		if stor, err := NewStorage(StorageTypeLocal); testingutils.AssertErr(t, err) {
+			testingutils.AssertExpect(t, "[object Storage]", stor.ToString_())
+		}
+
+	})
+
 }
 
 func TestGetItem(t *testing.T) {
